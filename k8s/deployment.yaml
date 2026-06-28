@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-clientes
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-clientes
+  template:
+    metadata:
+      labels:
+        app: api-clientes
+    spec:
+      containers:
+      - name: api-clientes
+        image: sergiocoti/api-clientes-devops:v1
+        ports:
+        - containerPort: 3000
