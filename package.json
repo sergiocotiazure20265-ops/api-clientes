@@ -1,0 +1,25 @@
+{
+  "name": "api-clientes",
+  "version": "1.0.0",
+  "description": "API NodeJS para controle de clientes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergiocotiazure20265-ops/api-clientes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sergiocotiazure20265-ops/api-clientes/issues"
+  },
+  "homepage": "https://github.com/sergiocotiazure20265-ops/api-clientes#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
