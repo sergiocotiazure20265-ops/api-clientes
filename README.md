@@ -63,5 +63,3 @@ Essa abordagem facilita o provisionamento do ambiente de banco de dados para des
 - pgAdmin: https://www.pgadmin.org/
 
 ---
-
-Se quiser, posso também adicionar exemplos de endpoints, um diagrama simples da arquitetura, ou instruções para executar o ambiente com Docker Compose — diga qual opção prefere.
