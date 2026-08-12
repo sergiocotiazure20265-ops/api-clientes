@@ -16,3 +16,19 @@ INSERT INTO planos(id, nome, descricao, valormensal)
 -- Consultando os planos
 SELECT * FROM planos;
 
+-- Criar a tabela de clientes
+CREATE TABLE clientes(
+    id                      UUID            PRIMARY KEY,
+    nome                    VARCHAR(150)    NOT NULL,
+    email                   VARCHAR(50)     NOT NULL,
+    cpf                     VARCHAR(11)     NOT NULL UNIQUE,
+    datahoracadastro        TIMESTAMP       NOT NULL,
+    datahoraalteracao       TIMESTAMP       NULL,
+    datahoraexclusao        TIMESTAMP       NULL,
+    ativo                   BOOLEAN         DEFAULT TRUE,
+    plano_id                UUID            NOT NULL,
+    FOREIGN KEY(plano_id) REFERENCES planos(id)
+);
+
+
+
