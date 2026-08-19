@@ -42,18 +42,94 @@ public class ClientesController {
         }
     }
 
-    @PutMapping
-    public String put() {
-        return "Cliente atualizado com sucesso.";
+    @PutMapping("{id}")
+    public ResponseEntity<?> put(@PathVariable UUID id, @RequestBody ClienteRequestDto dto) {
+
+        try {
+            //Buscar o cliente no banco de dados através do ID..
+            var cliente = clienteRepository.obterPorId(id);
+
+            //Se nenhum cliente for encontrado
+            if(cliente == null) {
+                //HTTP 404 (NOT FOUND)
+                return ResponseEntity.status(404).body("Cliente não encontrado para edição.");
+            }
+
+            //Modificar os dados do cliente
+            cliente.setNome(dto.nome());
+            cliente.setEmail(dto.email());
+            cliente.setCpf(dto.cpf());
+            cliente.getPlano().setId(dto.planoId());
+
+            //Atualizando no banco de dados
+            clienteRepository.atualizar(cliente);
+
+            //HTTP 200 (OK)
+            return ResponseEntity.status(200).body("Cliente atualizado com sucesso.");
+        }
+        catch (Exception e) {
+            //HTTP 500 (INTERNAL SERVER ERROR)
+            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping
-    public String delete() {
-        return "Cliente excluído com sucesso.";
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+
+        try {
+
+            var cliente = clienteRepository.obterPorId(id);
+
+            if(cliente == null) {
+                //HTTP 404 (NOT FOUND)
+                return ResponseEntity.status(404).body("Cliente não encontrado para exclusão.");
+            }
+
+            clienteRepository.excluir(id);
+
+            //HTTP 200 (OK)
+            return ResponseEntity.status(200).body("Cliente excluído com sucesso.");
+        }
+        catch(Exception e) {
+            //HTTP 500 (INTERNAL SERVER ERROR)
+            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+        }
     }
 
-    @GetMapping
-    public String get() {
-        return "Consulta de clientes realizada com sucesso.";
+    @GetMapping()
+    public ResponseEntity<?> getByNome(@RequestParam String nome) {
+
+        try {
+
+            var clientes = clienteRepository.obterPorNome(nome);
+
+            //HTTP 200 (OK)
+            return ResponseEntity.status(200).body(clientes);
+        }
+        catch(Exception e) {
+            //HTTP 500 (INTERNAL SERVER ERROR)
+            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<?> getById(@PathVariable UUID id) {
+
+        try {
+
+            var cliente = clienteRepository.obterPorId(id);
+
+            if(cliente == null) {
+                //HTTP 404 (NOT FOUND)
+                return ResponseEntity.status(404).body("Cliente não encontrado.");
+            }
+
+            //HTTP 200 (OK)
+            return ResponseEntity.status(200).body(cliente);
+        }
+        catch(Exception e) {
+            //HTTP 500 (INTERNAL SERVER ERROR)
+            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+        }
     }
 }

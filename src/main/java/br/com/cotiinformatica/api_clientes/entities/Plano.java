@@ -1,5 +1,6 @@
 package br.com.cotiinformatica.api_clientes.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -12,5 +13,7 @@ public class Plano {
     private String nome;
     private String descricao;
     private Double valorMensal;
+
+    @JsonIgnore
     private List<Cliente> clientes;
 }
