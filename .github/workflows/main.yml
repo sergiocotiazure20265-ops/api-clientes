@@ -1,1 +1,76 @@
 # PIPELINE para versionamento e implantação com Dockerhub e Kubernetes
+name: CI/CD - Node.js + Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Node.js e Docker
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Baixar o codigo do GitHub
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Instalar Node.js 22
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # 3. Instalar dependencias do projeto
+      - name: Instalar dependencias
+        run: npm ci
+
+      # 4. Validar a sintaxe da aplicacao
+      - name: Validar Node.js
+        run: node --check src/app.js
+
+      # 5. Configurar Docker Buildx
+      - name: Configurar Docker
+        uses: docker/setup-buildx-action@v3
+
+      # 6. Autenticar no Docker Hub
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 7. Gerar versao automatica
+      - name: Gerar versao
+        id: version
+        run: |
+          VERSION="1.0.${{ github.run_number }}"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Versao: $VERSION"
+
+      # 8. Construir e publicar imagem Docker
+      - name: Build e Push Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/api-clientes:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/api-clientes:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 9. Exibir resultado
+      - name: Finalizar publicacao
+        run: |
+          echo "Publicacao concluida!"
+          echo "Versao: ${{ steps.version.outputs.VERSION }}"
+          echo "Imagem publicada no Docker Hub"
